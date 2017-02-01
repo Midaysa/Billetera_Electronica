@@ -65,15 +65,22 @@ class BilleteraElectronica(object):
 	def __init__(self, id, persona):
 		self.id = id
 		self.persona = persona
-		self.credito = []
-		self.debito = []
-		self.saldo = decimal.Decimal(0)
+		self.creditos = []
+		self.debitos = []
+		self.saldo_actual = decimal.Decimal(0)
 	
 	def saldo(self):
-		return self.saldo
+		return self.saldo_actual
 	
-	def recargar(self,recarga):
-		return -1
+	def recargar(self, recarga):
+		self.creditos.append(recarga)
+		self.saldo_actual += recarga.monto
 	
-	def consumir(self,consumo):
-		return -1
+	def consumir(self, consumo):
+		
+		if self.persona.pin != self.id:
+			raise ValueError('El PIN ingresado no coincide con el del usuario')
+		
+		self.debitos.append(consumo)
+		self.saldo_actual -= consumo.monto
+
