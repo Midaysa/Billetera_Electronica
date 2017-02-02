@@ -33,6 +33,9 @@ class Persona(object):
 			self.pin = None
 
 class Credito(object):
+	
+	getcontext().prec = 15
+	
 	def __init__(self, monto, id_recarga):
 		try:
 			assert(type(monto) is int or type(monto) is float)
@@ -46,6 +49,9 @@ class Credito(object):
 			self.monto = None
 
 class Debito(object):
+	
+	getcontext().prec = 15
+	
 	def __init__(self, monto, id_consumo):
 		try:
 			assert(type(monto) is int or type(monto) is float)
@@ -59,6 +65,9 @@ class Debito(object):
 			self.monto = None
 
 class BilleteraElectronica(object):
+	
+	getcontext().prec = 15
+	
 	def __init__(self, id, persona):
 		self.id = id
 		self.persona = persona
