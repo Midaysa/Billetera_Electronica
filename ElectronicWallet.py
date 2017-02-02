@@ -73,6 +73,10 @@ class BilleteraElectronica(object):
 		return self.saldo_actual
 	
 	def recargar(self, recarga):
+		
+		if recarga.monto <= 0:
+			raise ValueError ('El saldo a recargar es negativo o menor a cero')
+		
 		self.creditos.append(recarga)
 		self.saldo_actual += recarga.monto
 	
@@ -80,6 +84,12 @@ class BilleteraElectronica(object):
 		
 		if self.persona.pin != self.id:
 			raise ValueError('El PIN ingresado no coincide con el del usuario')
+		
+		if consumo.monto > self.saldo_actual:
+			raise ValueError('El consumo es mayor al saldo disponible')
+			
+		if consumo.monto == 0:
+			raise ValueError('El consumo realizado es 0')
 		
 		self.debitos.append(consumo)
 		self.saldo_actual -= consumo.monto
