@@ -27,11 +27,10 @@ class Persona(object):
 		if type(pin) != str:
 			raise TypeError("El PIN debe ser de tipo 'str'")
 		
-		pattern = '[^A-Za-z0-9]'
-		if re.search(pattern, nombres):
+		if not nombres.isalpha():
 			raise ValueError("Se ingreso un caracter especial en el nombre")
 		
-		if re.search(pattern, apellidos):
+		if not apellidos.isalpha():
 			raise ValueError("Se ingreso un caracter especial en el apellido")
 		
 		self.nombres = nombres
