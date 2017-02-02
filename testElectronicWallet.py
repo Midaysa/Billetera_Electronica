@@ -9,7 +9,7 @@ Create on 01/2/2017
 # -*- coding: utf-8 -*-
 # -⁻- coding: UTF-8 -*-
 
-import unittest, datetime
+import unittest, datetime, decimal, re
 from ElectronicWallet import *
 
 class billeteraElectronicaTeste(unittest.TestCase):
@@ -18,11 +18,11 @@ class billeteraElectronicaTeste(unittest.TestCase):
     
     # Caso: Crear Billetera
     def testCrearBilletera(self):
-        andrea = Persona('Andrea', 'Da Costa', 21800451, '12345')
+        andrea = Persona('Andrea', 'Costa', 21800451, '12345')
         andrea_billetera = BilleteraElectronica('12345', andrea)
         
         self.assertMultiLineEqual(andrea_billetera.persona.nombres, 'Andrea')
-        self.assertMultiLineEqual(andrea_billetera.persona.apellidos, 'Da Costa')
+        self.assertMultiLineEqual(andrea_billetera.persona.apellidos, 'Costa')
         self.assertEqual(andrea_billetera.persona.ci, 21800451)
         self.assertMultiLineEqual(andrea_billetera.persona.pin, '12345')
     
@@ -38,7 +38,7 @@ class billeteraElectronicaTeste(unittest.TestCase):
     
     # Caso: Consumo correcto
     def testConsumoCorrecto(self):
-        andrea = Persona('Andrea', 'Da Costa', 21800451, '12345')
+        andrea = Persona('Andrea', 'Costa', 21800451, '12345')
         andrea_billetera = BilleteraElectronica('12345', andrea)
         nueva_recarga = Credito(150, '20123920')
         nuevo_consumo = Debito(89, '30110043')
@@ -66,8 +66,8 @@ class billeteraElectronicaTeste(unittest.TestCase):
     # Casos esquina
     # 2.- Crear billetera con pin incorrecto
     def testCrearBilleteraPinIncorrecto(self):
-        return
-    
+        self.assertRaises(TypeError, Persona, ['Andres', 'Gonzalez', 21450451, 31234])
+
     # 3.- Verificacion de fechas
     def testVerificacionFecha(self):
         nueva_recarga = Credito(120, '65014932')
@@ -81,38 +81,57 @@ class billeteraElectronicaTeste(unittest.TestCase):
     
     # 4.- Recarga y consumo con decimales pequeños
     def testRecargaConsumoDecimalesPequenos(self):
-        
+        andrea = Persona('Andrea', 'Costa', 21800451, '12345')
+        andrea_billetera = BilleteraElectronica('12345', andrea)
+        nueva_recarga = Credito(1.145534, '20123920')
+        nuevo_consumo = Debito(0.000006, '30110043')
+        andrea_billetera.recargar(nueva_recarga)
+        andrea_billetera.consumir(nuevo_consumo)
+        self.assertEqual(andrea_billetera.saldo(), Decimal(1.145534)-Decimal(0.000006))
+    
+    
     # 5.- Recarga y consumo negativos
     def testRecargaConsumoNegativos(self):
-        return 
+        andrea = Persona('Andrea', 'Costa', 21800451, '12345')
+        andrea_billetera = BilleteraElectronica('12345', andrea)
+        nueva_recarga = Credito(-150, '20123920')
+        nuevo_consumo = Debito(-89, '30110043')
+        andrea_billetera.recargar(nueva_recarga)
+        andrea_billetera.consumir(nuevo_consumo)
+        
+        self.assertEqual(andrea_billetera.saldo(), 0)
     
     # 6.- Nombres
     def testNombres(self):
-        return
+        self.assertRaises(TypeError, Persona, [246703, 'Gonzalez', 21450451, '31234'])
     
-    # 7.- Apellidos
     def testApellidos(self):
-        return
+        self.assertRaises(TypeError, Persona, ['Andres', 35762 , 21450451, 31234])
     
     # 8.- Nombres con caracteres especiales
     def testNombreCaracteresEspeciales(self):
-        return
+        with self.assertRaises(Exception) as context:
+            andrea = Persona('Andr@', 'Da Costa Coronado', 21800451, '12345')
+        self.assertTrue("Se ingreso un caracter especial en el nombre" in str(context.exception))
     
     # 9.- Apellidos con caracteres especiales
     def testApellidosCaracteresEspeciales(self):
-        return
+        with self.assertRaises(Exception) as context:
+            andrea = Persona('Andrea', 'Costa$?/', 21800451, '12345')
+        self.assertTrue("Se ingreso un caracter especial en el apellido" in str(context.exception))
     
     # 10.- Consumo con otro tipo de datos distinto
     def testDatosConsumoErroneos(self):
-        return
+        self.assertRaises(TypeError, Debito, [500, 30110043])
     
     # 11.- Datos de las persona con tipos de datos distintos
     def testDatosPersonaErroneos(self):
-        return
+        self.assertRaises(TypeError, Persona, [2345, 244, '21450451', 31234])
     
     # 12.- Recarga con tipo de datos distinto
     def testDatosRecargaErroneos(self):
-        return
+        self.assertRaises(TypeError, Credito, [100, 31234])
+    
     
     # Casos Frontera:
     # 1.- Recarga negativa
