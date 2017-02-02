@@ -6,13 +6,15 @@ Create on 01/2/2017
 '''
 
 #!/usr/bin/env python
-# -⁻- coding: UTF-8 -*-
 # -*- coding: utf-8 -*-
+# -⁻- coding: UTF-8 -*-
 
 import unittest, datetime
 from ElectronicWallet import *
 
 class billeteraElectronicaTeste(unittest.TestCase):
+    
+    getcontext().prec = 15
     
     # Caso: Crear Billetera
     def testCrearBilletera(self):
@@ -115,76 +117,138 @@ class billeteraElectronicaTeste(unittest.TestCase):
     # Casos Frontera:
     # 1.- Recarga negativa
     def testRecargaNegativa(self):
-        return
-    
+        lalezka = Persona("Lalezka", "Duque", 23689465, "4545")
+        miBilletera = BilleteraElectronica("4545", lalezka)
+        micredito = Credito(-200, "3399")
+        miBilletera.recargar(micredito)
+        self.assertEquals(miBilletera.saldo(), Decimal(0))
+        
     # 2.- Consumo negativo
     def testConsumoNegativo(self):
-        return
-    
+        lalezka = Persona("Lalezka", "Duque", 23689465, "4545")
+        miBilletera = BilleteraElectronica("4545", lalezka)
+        micredito = Credito(500, "3399")
+        miBilletera.recargar(micredito)
+        midebito = Debito(-200, "3679")
+        miBilletera.consumir(midebito)
+        self.assertEquals(miBilletera.saldo(), Decimal(500))
+                          
     # 3.- Precision de la recarga
     def testRecargaDecimalesPequenos(self):
-        return
+        lalezka = Persona("Lalezka", "Duque", 23689465, "4545")
+        miBilletera = BilleteraElectronica("4545", lalezka)
+        micredito = Credito(0.0000001, "5864")
+        miBilletera.recargar(micredito)
+        self.assertEquals(miBilletera.saldo(), Decimal(0)+Decimal(0.0000001))
+
+    # 4.- Consumir con pin incorrecto
+    def testConsumoPinIncorrecto(self):
+        pedro = Persona("Pedro", "Camejo", 1715630, "12345")
+        miBilletera = BilleteraElectronica("23417", pedro)
+        micredito = Credito(80, "90013422")
+        miBilletera.recargar(micredito)
+        midebito = Debito(40, "900464456")
+        miBilletera.consumir(midebito)
+        self.assertEquals(miBilletera.saldo(), Decimal(80))
     
-    # 4.- Precicion del consumo
+    # 5.- Precicion del consumo
     def testConsumoDecimalesPequenos(self):
-        return
+        lalezka = Persona("Lalezka", "Duque", 23689465, "4545")
+        miBilletera = BilleteraElectronica("4545", lalezka)
+        micredito = Credito(200, "5864")
+        miBilletera.recargar(micredito)
+        midebito = Debito(0.00000001, "5864")
+        miBilletera.consumir(midebito)
+        self.assertEquals(miBilletera.saldo(), Decimal(200)-Decimal(0.00000001))
     
-    # 5.- Recarga con el máximo entero (32 bits)
+    # 6.- Recarga con el máximo entero (32 bits)
     def testRecargaMaxEntero(self):
-        return
+        lalezka = Persona("Lalezka", "Duque", 23689465, "4545")
+        miBilletera = BilleteraElectronica("4545", lalezka)
+        micredito = Credito(245678901388, "5864")
+        miBilletera.recargar(micredito)
+        self.assertEquals(miBilletera.saldo(), Decimal(245678901388))
     
     # 6.- Recarga y consumo total
     def testRecargaConsumoTotal(self):
-        return
+        lalezka = Persona("Lalezka", "Duque", 23689465, "4545")
+        miBilletera = BilleteraElectronica("4545", lalezka)
+        micredito = Credito(99, "5464")
+        miBilletera.recargar(micredito)
+        midebito = Debito(99, "6666")
+        miBilletera.consumir(midebito)
+        self.assertEquals(miBilletera.saldo(), Decimal(0))
     
     # 7.- Recarga cero
     def testRecargaCero(self):
-        return
+        lalezka = Persona("Lalezka", "Duque", 23689465, "4545")
+        miBilletera = BilleteraElectronica("4545", lalezka)
+        micredito = Credito(99, "3764")
+        miBilletera.recargar(micredito)
+        micreditocero = Credito(0, "4565")
+        miBilletera.recargar(micreditocero)
+        self.assertEquals(miBilletera.saldo(), Decimal(99))
     
     # 8.- Consumir cero
     def testConsumoCero(self):
-        return
+        lalezka = Persona("Lalezka", "Duque", 23689465, "4545")
+        miBilletera = BilleteraElectronica("4545", lalezka)
+        micredito = Credito(45, "1280")
+        miBilletera.recargar(micredito)
+        midebito = Debito(0, "3490")
+        miBilletera.consumir(midebito)
+        self.assertEquals(miBilletera.saldo(), Decimal(45))
     
     # Casos maliciosos
     # 1.- Consumo mayor que recarga
     def testConsumoMayorQueRecarga(self):
-        return
+        lalezka = Persona("Lalezka", "Duque", 23689465, "4545")
+        miBilletera = BilleteraElectronica("4545", lalezka)
+        micredito = Credito(45, "1280")
+        miBilletera.recargar(micredito)
+        midebito = Debito(100, "3490")
+        miBilletera.consumir(midebito)
+        self.assertEquals(miBilletera.saldo(), Decimal(45))
     
     # 2.- Recarga entera y consumo decimal
     def testRecargaEnteraConsumoDecimal(self):
-        return
+        lalezka = Persona("Lalezka", "Duque", 23689465, "4545")
+        miBilletera = BilleteraElectronica("4545", lalezka)
+        micredito = Credito(45, "1280")
+        miBilletera.recargar(micredito)
+        midebito = Debito(30.45, "3490")
+        miBilletera.consumir(midebito)
+        self.assertEquals(miBilletera.saldo(), Decimal(45)-Decimal(30.45))
     
     # 3.- Recarga decimal y consumo entero
     def testRecargaDecimalConsumoEntero(self):
-        return
+        lalezka = Persona("Lalezka", "Duque", 23689465, "4545")
+        miBilletera = BilleteraElectronica("4545", lalezka)
+        micredito = Credito(10.66, "1280")
+        miBilletera.recargar(micredito)
+        midebito = Debito(5, "3490")
+        miBilletera.consumir(midebito)
+        self.assertEquals(miBilletera.saldo(), Decimal(0)+Decimal(10.66)-Decimal(5))
     
-    # 4.- Consumir con pin incorrecto
-    def testConsumoPinIncorrecto(self):
-        with self.assertRaises(ValueError) as context:
-            nuevo_debito = Debito(40, '900464456')
-            pedro = Persona('Pedro', 'Camejo', 1715630, '12345')
-            BilleteraElectronica('23417', pedro).consumir(nuevo_debito)
-            
-        self.assertTrue('El PIN ingresado no coincide con el del usuario' in str(context.exception))
-        
-    # 5.- Consumir con pin correcto
-    def testPinCorrecto(self):
-        nuevo_debito = Debito(40, '90013422')
-        pedro = Persona('Pedro', 'Camejo', 1715630, '12345')
-        pedro_billetera = BilleteraElectronica('12345', pedro)
-        nuevo_credito = Credito(100, '94320110')
-        pedro_billetera.recargar(nuevo_credito)
-        pedro_billetera.consumir(nuevo_debito)
-        
-        self.assertEqual(pedro_billetera.saldo(), 60)
-    
-    # 6.- Recarga y consumo decimal
+    # 4.- Recarga y consumo decimal
     def testRecargaConsumoDecimal(self):
-        return
+        lalezka = Persona("Lalezka", "Duque", 23689465, "4545")
+        miBilletera = BilleteraElectronica("4545", lalezka)
+        micredito = Credito(25.78, "1280")
+        miBilletera.recargar(micredito)
+        midebito = Debito(11.99, "3490")
+        miBilletera.consumir(midebito)
+        self.assertEquals(miBilletera.saldo(), Decimal(25.78)-Decimal(11.99))
     
-    # 7.- Recarga y consumo entero
+    # 5.- Recarga y consumo entero
     def testRecargaConsumoEntero(self):
-        return
+        lalezka = Persona("Lalezka", "Duque", 23689465, "4545")
+        miBilletera = BilleteraElectronica("4545", lalezka)
+        micredito = Credito(300, "1280")
+        miBilletera.recargar(micredito)
+        midebito = Debito(100, "3490")
+        miBilletera.consumir(midebito)
+        self.assertEquals(miBilletera.saldo(), Decimal(300)-Decimal(100))
 
 if __name__ == "__main__":
     unittest.main()

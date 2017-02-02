@@ -10,7 +10,7 @@ Created on 29 ene. 2017
 # -*- coding: utf-8 -*-
 
 import datetime
-import decimal
+from decimal import *
 
 
 class Persona(object):
@@ -26,19 +26,20 @@ class Persona(object):
 			self.ci = ci
 			self.pin = pin
 		except:
-			print("Error en los datos del dueño de la billetera.")
+			print("Error en los datos del usuario.")
 			self.nombres = None
 			self.apellidos = None
 			self.ci = None
 			self.pin = None
 
 class Credito(object):
+	
+	getcontext().prec = 15
+	
 	def __init__(self, monto, id_recarga):
 		try:
-			assert(type(monto) is int)
-			assert(decimal.Decimal(monto))
-			
-			self.monto = decimal.Decimal(monto)
+			assert(type(monto) is int or type(monto) is float)
+			self.monto = Decimal(monto)
 			self.fecha_recarga = datetime.datetime.now()
 			self.id_recarga = id_recarga
 		except:
@@ -48,11 +49,13 @@ class Credito(object):
 			self.monto = None
 
 class Debito(object):
+	
+	getcontext().prec = 15
+	
 	def __init__(self, monto, id_consumo):
 		try:
-			assert(type(monto) is int)
-			assert(decimal.Decimal(monto))
-			self.monto = decimal.Decimal(monto)
+			assert(type(monto) is int or type(monto) is float)
+			self.monto = Decimal(monto)
 			self.fecha_consumo = datetime.datetime.now()
 			self.id_consumo = id_consumo
 		except:
@@ -62,35 +65,40 @@ class Debito(object):
 			self.monto = None
 
 class BilleteraElectronica(object):
+	
+	getcontext().prec = 15
+	
 	def __init__(self, id, persona):
 		self.id = id
 		self.persona = persona
 		self.creditos = []
 		self.debitos = []
-		self.saldo_actual = decimal.Decimal(0)
+		self.saldo_actual = Decimal(0)
 	
 	def saldo(self):
 		return self.saldo_actual
 	
 	def recargar(self, recarga):
-		
-		if recarga.monto <= 0:
-			raise ValueError ('El saldo a recargar es negativo o menor a cero')
+		if (recarga.monto <= 0):
+			print("El saldo a recargar debe ser un numero natural.")
+			return -1
 		
 		self.creditos.append(recarga)
 		self.saldo_actual += recarga.monto
-	
+		
 	def consumir(self, consumo):
+		if (self.persona.pin != self.id):
+			print("El PIN ingresado no coincide con el del usuario.")
+			return -1
 		
-		if self.persona.pin != self.id:
-			raise ValueError('El PIN ingresado no coincide con el del usuario')
+		if (consumo.monto > self.saldo_actual):
+			print("El consumo es mayor al saldo disponible.")
+			return -1
 		
-		if consumo.monto > self.saldo_actual:
-			raise ValueError('El consumo es mayor al saldo disponible')
-			
-		if consumo.monto == 0:
-			raise ValueError('El consumo realizado es 0')
+		if (consumo.monto <= 0):
+			print("El consumo a realizar debe ser un numero natural.")
+			return -1
 		
 		self.debitos.append(consumo)
 		self.saldo_actual -= consumo.monto
-
+		
