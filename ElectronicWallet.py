@@ -36,7 +36,7 @@ class Credito(object):
 	def __init__(self, monto, id_recarga):
 		try:
 			assert(type(monto) is int)
-			assert(decimal.Decimal(monto))
+			#assert(decimal.Decimal(monto))
 			self.monto = Decimal(monto)
 			self.fecha_recarga = datetime.datetime.now()
 			self.id_recarga = id_recarga
@@ -50,7 +50,7 @@ class Debito(object):
 	def __init__(self, monto, id_consumo):
 		try:
 			assert(type(monto) is int)
-			assert(decimal.Decimal(monto))
+			#assert(decimal.Decimal(monto))
 			self.monto = Decimal(monto)
 			self.fecha_consumo = datetime.datetime.now()
 			self.id_consumo = id_consumo
@@ -69,7 +69,7 @@ class BilleteraElectronica(object):
 		self.saldo_actual = Decimal(0)
 	
 	def saldo(self):
-		return self.saldo
+		return self.saldo_actual
 	
 	def recargar(self,recarga):
 		if (recarga.monto <= 0):
