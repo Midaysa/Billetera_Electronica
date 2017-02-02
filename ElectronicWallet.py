@@ -78,7 +78,7 @@ class BilleteraElectronica(object):
 	def saldo(self):
 		return self.saldo_actual
 	
-	def recargar(self,recarga):
+	def recargar(self, recarga):
 		if (recarga.monto <= 0):
 			print("El saldo a recargar debe ser un numero natural.")
 			return -1
@@ -86,7 +86,7 @@ class BilleteraElectronica(object):
 		self.creditos.append(recarga)
 		self.saldo_actual += recarga.monto
 		
-	def consumir(self,consumo):
+	def consumir(self, consumo):
 		if (self.persona.pin != self.id):
 			print("El PIN ingresado no coincide con el del usuario.")
 			return -1
@@ -101,3 +101,4 @@ class BilleteraElectronica(object):
 		
 		self.debitos.append(consumo)
 		self.saldo_actual -= consumo.monto
+		

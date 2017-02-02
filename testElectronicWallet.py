@@ -6,8 +6,8 @@ Create on 01/2/2017
 '''
 
 #!/usr/bin/env python
-# -⁻- coding: UTF-8 -*-
 # -*- coding: utf-8 -*-
+# -⁻- coding: UTF-8 -*-
 
 import unittest
 from ElectronicWallet import *
