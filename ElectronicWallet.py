@@ -35,8 +35,7 @@ class Persona(object):
 class Credito(object):
 	def __init__(self, monto, id_recarga):
 		try:
-			assert(type(monto) is int)
-			#assert(decimal.Decimal(monto))
+			assert(type(monto) is int or type(monto) is float)
 			self.monto = Decimal(monto)
 			self.fecha_recarga = datetime.datetime.now()
 			self.id_recarga = id_recarga
@@ -49,8 +48,7 @@ class Credito(object):
 class Debito(object):
 	def __init__(self, monto, id_consumo):
 		try:
-			assert(type(monto) is int)
-			#assert(decimal.Decimal(monto))
+			assert(type(monto) is int or type(monto) is float)
 			self.monto = Decimal(monto)
 			self.fecha_consumo = datetime.datetime.now()
 			self.id_consumo = id_consumo
